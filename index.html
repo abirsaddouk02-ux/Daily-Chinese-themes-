@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Thèmes - Chinois Quotidien</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --primary: #c0392b;
+      --primary-hover: #a93226;
+      --text: #2c3e50;
+      --muted: #7f8c8d;
+      --border: #e0e6ed;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: var(--card);
+      max-width: 600px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      text-align: center;
+      color: var(--primary);
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    select, button {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+    }
+    select {
+      flex: 1;
+      background: #fff;
+      cursor: pointer;
+    }
+    button.btn-primary {
+      flex: 2;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button.btn-primary:hover { background: var(--primary-hover); }
+    .result-box {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      background: #fdfdfd;
+      display: none;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #fadbd8;
+      color: var(--primary);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .theme-zh {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    .theme-pinyin {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .theme-fr {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-top: 15px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
+    .checklist li {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-secondary {
+      flex: 1;
+      background: #ecf0f1;
+      color: var(--text);
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .btn-secondary:hover { background: #dfe6e9; }
+    .copied-msg {
+      color: #27ae60;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🇨🇳 Thème du Jour</h1>
+  
+  <div class="controls">
+    <select id="levelSelect">
+      <option value="ALL">Tous les niveaux</option>
+      <option value="HSK 1">HSK 1 (Bases & Quotidien)</option>
+      <option value="HSK 2">HSK 2 (Vie courante & Récits)</option>
+      <option value="HSK 3">HSK 3 (Opinions & Situations)</option>
+    </select>
+    <button class="btn-primary" onclick="generateTheme()">Générer un thème</button>
+  </div>
+
+  <div class="result-box" id="resultBox">
+    <span class="badge" id="resLevel">HSK 1</span>
+    <div class="theme-zh" id="resZh">点菜</div>
+    <div class="theme-pinyin" id="resPinyin">diǎn cài</div>
+    <div class="theme-fr" id="resFr">Commander au restaurant</div>
+
+    <div class="section-title">Plan de la session</div>
+    <ul class="checklist">
+      <li><input type="checkbox"> 1. Vidéo CI / Vlog sur ce thème</li>
+      <li><input type="checkbox"> 2. Vocabulaire clé & phrases typiques</li>
+      <li><input type="checkbox"> 3. Lecture du texte associé</li>
+      <li><input type="checkbox"> 4. Lecture & Shadowing du dialogue</li>
+    </ul>
+
+    <div class="action-buttons">
+      <a id="ytLink" href="#" target="_blank" class="btn-secondary">🔍 Chercher vidéo YouTube</a>
+      <button class="btn-secondary" onclick="copyPrompt()">📋 Copier le prompt IA</button>
+    </div>
+    <div class="copied-msg" id="copiedMsg">Prompt copié ! Colle-le dans ton chat pour générer le cours complet.</div>
+  </div>
+</div>
+
+<script>
+  const themes = [
+    // HSK 1
+    { level: "HSK 1", zh: "自我介绍", pinyin: "zìwǒ jièshào", fr: "Se présenter (nom, nationalité, métier)", kw: "自我介绍 中文" },
+    { level: "HSK 1", zh: "点菜", pinyin: "diǎn cài", fr: "Commander au restaurant et boissons", kw: "中文 点菜 对话" },
+    { level: "HSK 1", zh: "买东西", pinyin: "mǎi dōngxi", fr: "Faire des achats et demander le prix", kw: "买东西 多少钱 中文" },
+    { level: "HSK 1", zh: "我的一天", pinyin: "wǒ de yī tiān", fr: "Décrire sa routine quotidienne et l'heure", kw: "我的一天 日常 中文" },
+    { level: "HSK 1", zh: "我的家人", pinyin: "wǒ de jiārén", fr: "Parler de sa famille et de son entourage", kw: "介绍家人 中文" },
+    { level: "HSK 1", zh: "天气怎么样", pinyin: "tiānqì zěnmeyàng", fr: "Parler de la météo et des saisons", kw: "天气 怎么样 中文" },
+    { level: "HSK 1", zh: "问路", pinyin: "wèn lù", fr: "Demander son chemin et se situer", kw: "问路 中文 对话" },
+    { level: "HSK 1", zh: "周末计划", pinyin: "zhōumò jìhuà", fr: "Parler de ses loisirs et du week-end", kw: "周末 做什么 中文" },
+
+    // HSK 2
+    { level: "HSK 2", zh: "看病", pinyin: "kàn bìng", fr: "Aller chez le médecin et décrire un symptôme", kw: "看病 身体不舒服 中文" },
+    { level: "HSK 2", zh: "运动与健康", pinyin: "yùndòng yǔ jiànkāng", fr: "Le sport, l'entraînement et la santé", kw: "运动 健康 vlog 中文" },
+    { level: "HSK 2", zh: "旅游经历", pinyin: "lǚyóu jīnglì", fr: "Raconter un voyage et les transports", kw: "旅游 经历 中文" },
+    { level: "HSK 2", zh: "租房子", pinyin: "zū fángzi", fr: "Louer un appartement et décrire son logement", kw: "租房子 中文 对话" },
+    { level: "HSK 2", zh: "做饭", pinyin: "zuò fàn", fr: "Cuisiner à la maison et parler des goûts", kw: "做饭 日常 vlog 中文" },
+    { level: "HSK 2", zh: "学习中文的方法", pinyin: "xuéxí zhōngwén de fāngfǎ", fr: "Parler de son apprentissage des langues", kw: "学习中文 方法" },
+    { level: "HSK 2", zh: "过生日", pinyin: "guò shēngrì", fr: "Fêter un anniversaire et offrir un cadeau", kw: "过生日 礼物 中文" },
+    { level: "HSK 2", zh: "交通工具", pinyin: "jiāotōng gōngjù", fr: "Prendre le train, le métro ou le taxi", kw: "坐地铁 出租车 中文" },
+
+    // HSK 3
+    { level: "HSK 3", zh: "工作与职业", pinyin: "gōngzuò yǔ zhíyè", fr: "Parler de son travail, de ses projets et collègues", kw: "工作 日常 vlog 中文" },
+    { level: "HSK 3", zh: "网购体验", pinyin: "wǎnggòu tǐyàn", fr: "Acheter en ligne et gérer une livraison", kw: "网购 快递 中文" },
+    { level: "HSK 3", zh: "生活习惯", pinyin: "shēnghuó xíguàn", fr: "Changer ses habitudes et gérer son temps", kw: "生活习惯 时间管理 中文" },
+    { level: "HSK 3", zh: "文化差异", pinyin: "wénhuà chāyì", fr: "Comparer les habitudes culturelles", kw: "文化差异 中法" },
+    { level: "HSK 3", zh: "环境保护", pinyin: "huánjìng bǎohù", fr: "L'écologie et les gestes du quotidien", kw: "环境保护 生活 中文" },
+    { level: "HSK 3", zh: "情绪与压力", pinyin: "qíngxù yǔ yālì", fr: "Gérer le stress et exprimer ses émotions", kw: "压力 情绪 中文" }
+  ];
+
+  let currentTheme = null;
+  let lastIndex = -1;
+
+  function generateTheme() {
+    const selectedLevel = document.getElementById("levelSelect").value;
+    const filtered = selectedLevel === "ALL" 
+      ? themes 
+      : themes.filter(t => t.level === selectedLevel);
+
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * filtered.length);
+    } while (filtered.length > 1 && randomIndex === lastIndex);
+    
+    lastIndex = randomIndex;
+    currentTheme = filtered[randomIndex];
+
+    document.getElementById("resLevel").textContent = currentTheme.level;
+    document.getElementById("resZh").textContent = currentTheme.zh;
+    document.getElementById("resPinyin").textContent = currentTheme.pinyin;
+    document.getElementById("resFr").textContent = currentTheme.fr;
+
+    // Reset checkboxes
+    document.querySelectorAll('.checklist input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+    // Update YouTube Search URL (Comprehensible Input / Vlog filter)
+    const ytQuery = encodeURIComponent(currentTheme.kw + " comprehensible input");
+    document.getElementById("ytLink").href = `https://www.youtube.com/results?search_query=${ytQuery}`;
+
+    document.getElementById("resultBox").style.display = "block";
+    document.getElementById("copiedMsg").style.display = "none";
+  }
+
+  function copyPrompt() {
+    if (!currentTheme) return;
+    const promptText = `Génère ma fiche d'étude de chinois du jour sur le thème : "${currentTheme.zh} (${currentTheme.pinyin}) - ${currentTheme.fr}" au niveau ${currentTheme.level}.
+Je veux :
+1. Une liste de 8 mots de vocabulaire essentiels (Hanzi, Pinyin, Traduction).
+2. 4 phrases typiques et structures grammaticales utiles liées à ce thème.
+3. Un texte de lecture court (environ 100-150 caractères) adapté au niveau ${currentTheme.level} (sans pinyin dans le texte, avec traduction en dessous).
+4. Une conversation typique naturelle entre deux personnes (6 à 8 répliques) sur ce thème.`;
+
+    navigator.clipboard.writeText(promptText).then(() => {
+      const msg = document.getElementById("copiedMsg");
+      msg.style.display = "block";
+      setTimeout(() => { msg.style.display = "none"; }, 4000);
+    });
+  }
+</script>
+
+</body>
+</html>
